@@ -68,4 +68,15 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:alpha="0.0" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/blackoutbutton"
+        android:text="disconnect"
+        android:editable="false"
+        android:inputType="none" />
 </RelativeLayout>
