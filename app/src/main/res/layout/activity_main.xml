@@ -69,16 +69,19 @@
         android:layout_centerHorizontal="true"
         android:alpha="0.0" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
+    <Button
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/status_error"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#fff"
+        android:id="@+id/status"
+        android:alpha="1.0"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/blackoutbutton"
-        android:text="disconnect"
-        android:editable="false"
-        android:inputType="none" />
+        android:layout_toStartOf="@+id/blackoutbutton"
+        android:layout_above="@+id/blackoutbutton"
+        android:layout_alignEnd="@+id/editText2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -86,6 +89,6 @@
         android:id="@+id/editText2"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:inputType="none"
-        android:text="status" />
+        android:text="status"
+        android:editable="false" />
 </RelativeLayout>

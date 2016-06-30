@@ -228,8 +228,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "...Соединяемся...");
         try {
             btSocket.connect();
-            EditText editText = (EditText)findViewById(R.id.editText);
-            editText.setText("connect");
+
+            findViewById(R.id.status).setBackground(getResources().getDrawable(R.drawable.status_ok));
+            //EditText editText = (EditText)findViewById(R.id.editText);
+           //editText.setText("connect");
             Log.d(TAG, "...Соединение установлено и готово к передачи данных...");
         } catch (IOException e) {
             try {
