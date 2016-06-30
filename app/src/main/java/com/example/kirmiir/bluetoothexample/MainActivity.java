@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     // MAC-адрес Bluetooth модуля
-    private static String address = "14:36:C6:2E:AC:2A";
+    private static String address = "20:15:05:15:63:23";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
