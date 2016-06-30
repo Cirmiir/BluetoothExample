@@ -29,7 +29,6 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
 
     Boolean onView;
-
     Handler h;
     private static final String TAG = "bluetooth1";
 
@@ -39,8 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private OutputStream outStream = null;
     final int RECIEVE_MESSAGE = 1;
 
+    private StringBuilder sb = new StringBuilder();
 
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
+
+    private ConnectedThread mConnectedThread;
 
     // SPP UUID сервиса
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -74,6 +76,26 @@ public class MainActivity extends AppCompatActivity {
                 ChangeView(onView);
             }
         });
+
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                switch (msg.what) {
+                    case RECIEVE_MESSAGE:                                                   // если приняли сообщение в Handler
+                        byte[] readBuf = (byte[]) msg.obj;
+                        String strIncom = new String(readBuf, 0, msg.arg1);
+                        sb.append(strIncom);                                                // формируем строку
+                        int endOfLineIndex = sb.indexOf("\r\n");                            // определяем символы конца строки
+                        if (endOfLineIndex > 0) {                                            // если встречаем конец строки,
+                            String sbprint = sb.substring(0, endOfLineIndex);               // то извлекаем строку
+                            sb.delete(0, sb.length());                                      // и очищаем sb
+                            EditText statusText = (EditText) findViewById(R.id.editText2);
+                            statusText.setText(sbprint);
+                        }
+                        //Log.d(TAG, "...Строка:"+ sb.toString() +  "Байт:" + msg.arg1 + "...");
+                        break;
+                }
+            };
+        };
 
         final Button buttonPtt = (Button) findViewById(R.id.pttbutton);
         buttonPtt.setOnTouchListener(new View.OnTouchListener() {
@@ -138,28 +160,43 @@ public class MainActivity extends AppCompatActivity {
         showAnim.setFillAfter(true);
         Animation hideAnim = AnimationUtils.loadAnimation(this,R.anim.hide_animation);
         hideAnim.setFillAfter(true);
+        Button onButton = (Button) findViewById(R.id.onbutton);
+        Button pttButton = (Button) findViewById(R.id.pttbutton);
+        Button offButton = (Button) findViewById(R.id.offbutton);
+        Button openButton = (Button) findViewById(R.id.openbutton);
+        Button blackoutButton = (Button) findViewById(R.id.blackoutbutton);
         if (on){
             findViewById(R.id.onbutton).bringToFront();
             Animation scale = AnimationUtils.loadAnimation(this,R.anim.button_scale_reverse);
             scale.setFillBefore(true);
             scale.setFillAfter(true);
-            findViewById(R.id.onbutton).startAnimation(scale);
-            findViewById(R.id.blackoutbutton).startAnimation(showAnim);
-            findViewById(R.id.openbutton).startAnimation(showAnim);
-            findViewById(R.id.pttbutton).startAnimation(hideAnim);
-            findViewById(R.id.offbutton).startAnimation(hideAnim);
+            onButton.startAnimation(scale);
+            onButton.setClickable(true);
+            blackoutButton.startAnimation(showAnim);
+            blackoutButton.setClickable(true);
+            openButton.startAnimation(showAnim);
+            openButton.setClickable(true);
+            pttButton.startAnimation(hideAnim);
+            pttButton.setClickable(false);
+            offButton.startAnimation(hideAnim);
+            offButton.setClickable(false);
         }
         else {
-            findViewById(R.id.pttbutton).bringToFront();
-            findViewById(R.id.pttbutton).startAnimation(showAnim);
-            findViewById(R.id.pttbutton).setAlpha(1.0f);
-            findViewById(R.id.offbutton).startAnimation(showAnim);
-            findViewById(R.id.offbutton).setAlpha(1.0f);
+            pttButton.bringToFront();
+            pttButton.startAnimation(showAnim);
+            pttButton.setAlpha(1.0f);
+            pttButton.setClickable(true);
+            offButton.startAnimation(showAnim);
+            offButton.setAlpha(1.0f);
+            offButton.setClickable(true);
             Animation scale = AnimationUtils.loadAnimation(this,R.anim.button_scale);
             scale.setFillAfter(true);
-            findViewById(R.id.onbutton).startAnimation(scale);
-            findViewById(R.id.blackoutbutton).startAnimation(hideAnim);
-            findViewById(R.id.openbutton).startAnimation(hideAnim);
+            onButton.startAnimation(scale);
+            onButton.setClickable(false);
+            blackoutButton.startAnimation(hideAnim);
+            blackoutButton.setClickable(false);
+            openButton.startAnimation(hideAnim);
+            openButton.setClickable(false);
         }
 
     }
@@ -210,6 +247,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             errorExit("Fatal Error", "In onResume() and output stream creation failed:" + e.getMessage() + ".");
         }
+
+
+        mConnectedThread = new ConnectedThread(btSocket);
+        mConnectedThread.start();
     }
 
     @Override
